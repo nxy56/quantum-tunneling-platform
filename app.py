@@ -349,114 +349,145 @@ hr {
     }
 }
 
-/* 横屏手机：保留桌面式并排结构，并缩放到手机视口 */
-@media screen and (orientation: landscape) and (max-height: 650px) and (max-width: 1100px) {
+/* 横屏手机：固定从左上角缩放，避免宽容器居中后左右被裁切 */
+@media screen and (orientation: landscape) and (max-height: 700px) and (max-width: 1200px) {
     html,
     body,
-    [data-testid="stAppViewContainer"] {
-        overflow-x: hidden !important;
-    }
-
-    [data-testid="stHeader"] {
-        height: 2.15rem;
-        min-height: 2.15rem;
-    }
-
+    [data-testid="stAppViewContainer"],
     [data-testid="stMain"] {
+        width: 100vw !important;
+        max-width: 100vw !important;
         overflow-x: hidden !important;
     }
 
-    .block-container {
-        width: 138.89vw !important;
-        max-width: none !important;
-        padding-top: 0.1rem !important;
-        padding-right: 0.55rem !important;
-        padding-bottom: 0.2rem !important;
-        padding-left: 0.55rem !important;
-        transform: scale(0.72);
-        transform-origin: top left;
+    /* 隐藏 Streamlit 自己的顶部工具栏，给手机浏览器腾出纵向空间 */
+    [data-testid="stHeader"] {
+        display: none !important;
+        height: 0 !important;
+        min-height: 0 !important;
     }
 
-    /* 阻止 Streamlit 在窄屏时把列改成上下堆叠 */
+    /* 核心修复：
+       1. 容器不再居中；
+       2. 从左上角缩放；
+       3. 0.65 × 153.846% ≈ 100%，正好铺满视口。 */
+    .block-container {
+        position: relative !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 153.846vw !important;
+        max-width: none !important;
+        margin: 0 !important;
+        padding: 0.15rem 0.55rem 0.35rem 0.55rem !important;
+        transform: scale(0.65) !important;
+        transform-origin: top left !important;
+    }
+
+    /* 阻止 Streamlit 把主图和控制面板改成上下堆叠 */
     [data-testid="stHorizontalBlock"] {
+        width: 100% !important;
         flex-wrap: nowrap !important;
-        gap: 0.45rem !important;
+        align-items: flex-start !important;
+        gap: 0.4rem !important;
     }
 
     [data-testid="column"] {
         min-width: 0 !important;
         width: auto !important;
+        flex-shrink: 1 !important;
+    }
+
+    /* 横屏时隐藏 Plotly 浮动工具条，避免遮挡图例和势垒标题 */
+    .modebar {
+        display: none !important;
     }
 
     .main-top-offset,
     .side-top-offset {
-        height: 0.25rem !important;
+        height: 0 !important;
     }
 
     .dashboard-title,
-    .side-title,
+    .side-title {
+        font-size: 1.68rem !important;
+        line-height: 1.03 !important;
+    }
+
     .section-label {
-        font-size: 1.7rem !important;
+        font-size: 1.28rem !important;
+        line-height: 1.05 !important;
+        margin-top: 0.38rem !important;
+        margin-bottom: 0.16rem !important;
     }
 
     .dashboard-subtitle {
-        margin-top: 0.12rem;
-        margin-bottom: 0.25rem;
-        font-size: 0.82rem;
+        margin: 0.1rem 0 0.2rem 0 !important;
+        font-size: 0.78rem !important;
+        line-height: 1.22 !important;
     }
 
     [data-testid="stMetric"] {
-        min-height: 66px;
-        padding: 0.38rem 0.55rem;
+        min-height: 58px !important;
+        padding: 0.28rem 0.45rem !important;
+        border-radius: 10px !important;
+    }
+
+    [data-testid="stMetricLabel"] {
+        font-size: 0.72rem !important;
     }
 
     [data-testid="stMetricValue"] {
-        font-size: 1.45rem;
-    }
-
-    .section-label {
-        margin-top: 0.4rem;
-        margin-bottom: 0.2rem;
+        font-size: 1.35rem !important;
     }
 
     .param-grid {
-        gap: 0.25rem;
-        margin-top: 0.2rem;
-        margin-bottom: 0.3rem;
+        gap: 0.2rem !important;
+        margin: 0.16rem 0 0.22rem 0 !important;
     }
 
     .param-chip {
-        padding: 0.3rem 0.42rem;
-        font-size: 0.78rem;
+        padding: 0.24rem 0.36rem !important;
+        border-radius: 8px !important;
+        font-size: 0.72rem !important;
     }
 
     .tip-box,
     .compact-card {
-        padding: 0.42rem 0.52rem;
-        margin-top: 0.2rem;
-        margin-bottom: 0.3rem;
-        font-size: 0.78rem !important;
-        line-height: 1.35 !important;
+        padding: 0.34rem 0.44rem !important;
+        margin: 0.18rem 0 0.24rem 0 !important;
+        border-radius: 8px !important;
+        font-size: 0.72rem !important;
+        line-height: 1.28 !important;
     }
 
     .observation-list {
-        font-size: 0.78rem;
-        line-height: 1.35;
+        margin-left: 0.82rem !important;
+        font-size: 0.72rem !important;
+        line-height: 1.28 !important;
     }
 
     .chat-title {
-        font-size: 1rem;
+        font-size: 0.96rem !important;
+        margin-top: 0.08rem !important;
     }
 
     .chat-bubble-ai,
     .chat-bubble-user {
-        padding: 0.34rem 0.48rem;
-        font-size: 0.78rem;
+        padding: 0.28rem 0.4rem !important;
+        font-size: 0.72rem !important;
+        line-height: 1.28 !important;
     }
 
     div.stButton > button,
     div[data-testid="stFormSubmitButton"] > button {
-        min-height: 1.95rem;
+        min-height: 1.8rem !important;
+        padding-top: 0.2rem !important;
+        padding-bottom: 0.2rem !important;
+    }
+
+    div[data-testid="stTextInput"] input {
+        min-height: 1.8rem !important;
+        font-size: 0.72rem !important;
     }
 }
 </style>
