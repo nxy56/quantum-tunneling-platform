@@ -274,7 +274,211 @@ hr {
         height: 0.75rem;
     }
 }
+
+/* 竖屏手机：遮住纵向堆叠页面，提示用户旋转设备 */
+.rotate-device-overlay {
+    display: none;
+}
+
+@media screen and (orientation: portrait) and (max-width: 900px) {
+    html,
+    body {
+        overflow: hidden !important;
+    }
+
+    .rotate-device-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483647;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+        background:
+            radial-gradient(circle at 25% 15%, rgba(0, 216, 255, 0.18), transparent 34%),
+            radial-gradient(circle at 78% 78%, rgba(57, 255, 20, 0.10), transparent 30%),
+            #030812;
+    }
+
+    .rotate-device-card {
+        width: min(88vw, 430px);
+        padding: 2rem 1.35rem;
+        text-align: center;
+        color: #d9f6ff;
+        background: rgba(8, 20, 44, 0.97);
+        border: 1px solid rgba(80, 231, 255, 0.42);
+        border-radius: 24px;
+        box-shadow:
+            0 0 28px rgba(0, 216, 255, 0.16),
+            inset 0 0 24px rgba(0, 216, 255, 0.05);
+    }
+
+    .rotate-device-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 5.6rem;
+        height: 5.6rem;
+        margin-bottom: 1rem;
+        border: 3px solid #50e7ff;
+        border-radius: 18px;
+        color: #39ff14;
+        font-size: 3.2rem;
+        line-height: 1;
+        transform: rotate(90deg);
+        box-shadow: 0 0 22px rgba(80, 231, 255, 0.22);
+    }
+
+    .rotate-device-title {
+        margin-bottom: 0.65rem;
+        color: #50e7ff;
+        font-size: 1.65rem;
+        font-weight: 800;
+    }
+
+    .rotate-device-text {
+        color: #a9cee0;
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    .rotate-device-note {
+        margin-top: 0.85rem;
+        color: #66f29a;
+        font-size: 0.9rem;
+    }
+}
+
+/* 横屏手机：保留桌面式并排结构，并缩放到手机视口 */
+@media screen and (orientation: landscape) and (max-height: 650px) and (max-width: 1100px) {
+    html,
+    body,
+    [data-testid="stAppViewContainer"] {
+        overflow-x: hidden !important;
+    }
+
+    [data-testid="stHeader"] {
+        height: 2.15rem;
+        min-height: 2.15rem;
+    }
+
+    [data-testid="stMain"] {
+        overflow-x: hidden !important;
+    }
+
+    .block-container {
+        width: 138.89vw !important;
+        max-width: none !important;
+        padding-top: 0.1rem !important;
+        padding-right: 0.55rem !important;
+        padding-bottom: 0.2rem !important;
+        padding-left: 0.55rem !important;
+        transform: scale(0.72);
+        transform-origin: top left;
+    }
+
+    /* 阻止 Streamlit 在窄屏时把列改成上下堆叠 */
+    [data-testid="stHorizontalBlock"] {
+        flex-wrap: nowrap !important;
+        gap: 0.45rem !important;
+    }
+
+    [data-testid="column"] {
+        min-width: 0 !important;
+        width: auto !important;
+    }
+
+    .main-top-offset,
+    .side-top-offset {
+        height: 0.25rem !important;
+    }
+
+    .dashboard-title,
+    .side-title,
+    .section-label {
+        font-size: 1.7rem !important;
+    }
+
+    .dashboard-subtitle {
+        margin-top: 0.12rem;
+        margin-bottom: 0.25rem;
+        font-size: 0.82rem;
+    }
+
+    [data-testid="stMetric"] {
+        min-height: 66px;
+        padding: 0.38rem 0.55rem;
+    }
+
+    [data-testid="stMetricValue"] {
+        font-size: 1.45rem;
+    }
+
+    .section-label {
+        margin-top: 0.4rem;
+        margin-bottom: 0.2rem;
+    }
+
+    .param-grid {
+        gap: 0.25rem;
+        margin-top: 0.2rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .param-chip {
+        padding: 0.3rem 0.42rem;
+        font-size: 0.78rem;
+    }
+
+    .tip-box,
+    .compact-card {
+        padding: 0.42rem 0.52rem;
+        margin-top: 0.2rem;
+        margin-bottom: 0.3rem;
+        font-size: 0.78rem !important;
+        line-height: 1.35 !important;
+    }
+
+    .observation-list {
+        font-size: 0.78rem;
+        line-height: 1.35;
+    }
+
+    .chat-title {
+        font-size: 1rem;
+    }
+
+    .chat-bubble-ai,
+    .chat-bubble-user {
+        padding: 0.34rem 0.48rem;
+        font-size: 0.78rem;
+    }
+
+    div.stButton > button,
+    div[data-testid="stFormSubmitButton"] > button {
+        min-height: 1.95rem;
+    }
+}
 </style>
+""",
+    unsafe_allow_html=True,
+)
+
+st.markdown(
+    """
+<div class="rotate-device-overlay">
+    <div class="rotate-device-card">
+        <div class="rotate-device-icon">↻</div>
+        <div class="rotate-device-title">请横屏查看交互平台</div>
+        <div class="rotate-device-text">
+            请开启手机自动旋转，然后将手机旋转 90°。<br>
+            横屏后将自动显示桌面式并排布局。
+        </div>
+        <div class="rotate-device-note">
+            若页面没有自动旋转，请解除系统的“竖屏锁定”。
+        </div>
+    </div>
+</div>
 """,
     unsafe_allow_html=True,
 )
