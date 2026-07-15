@@ -379,6 +379,18 @@ hr {
     [data-testid="stPlotlyChart"] {
         width: 100% !important;
         overflow: hidden !important;
+        touch-action: pan-y !important;
+    }
+
+    /* 手机端不允许在图表上框选、缩放或拖动。
+       触摸图表时只滚动页面，避免误触后曲线消失。 */
+    [data-testid="stPlotlyChart"] .js-plotly-plot,
+    [data-testid="stPlotlyChart"] .plot-container,
+    [data-testid="stPlotlyChart"] .svg-container {
+        pointer-events: none !important;
+        touch-action: pan-y !important;
+        user-select: none !important;
+        -webkit-user-select: none !important;
     }
 
     .modebar {
@@ -755,7 +767,7 @@ with main_col:
 调节参数，观察波函数与透射率如何随势垒高度、宽度、粒子能量和质量变化。
 </div>
 <div class="mobile-layout-note">
-手机竖屏和横屏均可直接使用。页面内容会按顺序排列，可上下滚动查看；
+手机竖屏和横屏均可直接使用。图表触摸缩放已锁定，手指划过图表时可正常滚动页面；
 需要横屏时，请在参数侧栏选择“在系统浏览器中打开”。
 </div>
 """,
@@ -887,7 +899,8 @@ with main_col:
         paper_bgcolor="rgba(5,10,20,1)",
         plot_bgcolor="rgba(3,8,18,1)",
         font=dict(color="#dffcff", size=13),
-        hovermode="x unified",
+        hovermode=False,
+        dragmode=False,
         legend=dict(
             x=0.985,
             y=0.985,
@@ -919,12 +932,11 @@ with main_col:
         use_container_width=True,
         config={
             "displaylogo": False,
+            "displayModeBar": False,
             "responsive": True,
-            "modeBarButtonsToRemove": [
-                "lasso2d",
-                "select2d",
-                "autoScale2d",
-            ],
+            "scrollZoom": False,
+            "doubleClick": False,
+            "showTips": False,
         },
     )
 
