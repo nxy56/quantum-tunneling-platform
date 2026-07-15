@@ -5,7 +5,6 @@ import numpy as np
 import plotly.graph_objects as go
 import requests
 import streamlit as st
-import streamlit.components.v1 as components
 
 
 st.set_page_config(
@@ -684,87 +683,34 @@ with st.sidebar:
     show_prob = st.toggle("显示 |ψ|²", value=False)
     use_api = st.toggle("AI 助教使用真实 API（已配置时）", value=False)
 
-    components.html(
+    st.markdown(
         """
-<!doctype html>
-<html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<style>
-html, body {
-    margin: 0;
-    padding: 0;
-    background: transparent;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-.wrap {
-    display: grid;
-    gap: 6px;
-}
-button {
-    width: 100%;
-    min-height: 38px;
-    border: 1px solid rgba(80, 231, 255, 0.42);
-    border-radius: 9px;
-    color: #e9fbff;
-    background: linear-gradient(135deg, #102a58, #0b1733);
-    font-size: 14px;
-    cursor: pointer;
-}
-button:active {
-    transform: scale(0.99);
-}
-#status {
-    min-height: 17px;
-    color: #9fd8ff;
-    font-size: 11px;
-    line-height: 1.35;
-}
-</style>
-</head>
-<body>
-<div class="wrap">
-    <button id="landscapeButton">手机端：尝试全屏横屏</button>
-    <div id="status">部分应用内置浏览器不支持锁定方向，失败时页面仍可竖屏滚动使用。</div>
+<div class="tip-box" style="margin-top:0.35rem;">
+<b>手机横屏查看</b><br>
+网页无法保证直接强制手机旋转。建议先使用下面的按钮在系统浏览器中打开，
+再解除方向锁并旋转手机。
 </div>
-<script>
-const button = document.getElementById("landscapeButton");
-const status = document.getElementById("status");
-
-button.addEventListener("click", async () => {
-    status.textContent = "正在请求全屏和横屏…";
-
-    try {
-        const parentDocument = window.parent.document;
-        const root = parentDocument.documentElement;
-
-        if (root.requestFullscreen) {
-            await root.requestFullscreen();
-        } else if (root.webkitRequestFullscreen) {
-            root.webkitRequestFullscreen();
-        }
-
-        const orientation =
-            window.parent.screen?.orientation ||
-            window.screen?.orientation;
-
-        if (orientation?.lock) {
-            await orientation.lock("landscape");
-            status.textContent = "已请求横屏。若未旋转，请手动旋转手机。";
-        } else {
-            status.textContent = "当前浏览器不支持自动锁定横屏，请手动旋转手机。";
-        }
-    } catch (error) {
-        status.textContent =
-            "浏览器拒绝自动横屏。请使用系统浏览器打开，或直接竖屏滚动查看。";
-    }
-});
-</script>
-</body>
-</html>
 """,
-        height=72,
+        unsafe_allow_html=True,
     )
+
+    st.link_button(
+        "在系统浏览器中打开",
+        "https://quantum-tunneling-platform-lzsc.streamlit.app/",
+        use_container_width=True,
+        type="primary",
+    )
+
+    if st.button(
+        "查看横屏操作说明",
+        use_container_width=True,
+        key="mobile_landscape_help",
+    ):
+        st.info(
+            "操作顺序：点击“在系统浏览器中打开” → "
+            "关闭手机竖屏锁定 → 将手机旋转 90°。"
+            "微信、QQ等应用内置浏览器可能不支持网页控制屏幕方向。"
+        )
 
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown(
@@ -810,7 +756,7 @@ with main_col:
 </div>
 <div class="mobile-layout-note">
 手机竖屏和横屏均可直接使用。页面内容会按顺序排列，可上下滚动查看；
-需要横屏时可在参数侧栏点击“尝试全屏横屏”。
+需要横屏时，请在参数侧栏选择“在系统浏览器中打开”。
 </div>
 """,
         unsafe_allow_html=True,
