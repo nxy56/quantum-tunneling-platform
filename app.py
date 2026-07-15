@@ -5,13 +5,14 @@ import numpy as np
 import plotly.graph_objects as go
 import requests
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 st.set_page_config(
     page_title="量子隧穿效应交互平台",
     page_icon="⚛️",
     layout="wide",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="auto",
 )
 
 # =========================================================
@@ -275,131 +276,40 @@ hr {
     }
 }
 
-/* 竖屏手机：遮住纵向堆叠页面，提示用户旋转设备 */
-.rotate-device-overlay {
+/* 手机端采用真实响应式布局，不再遮挡页面，也不再整体缩放 */
+.mobile-layout-note {
     display: none;
 }
 
-@media screen and (orientation: portrait) and (max-width: 900px) {
-    html,
-    body {
-        overflow: hidden !important;
-    }
-
-    .rotate-device-overlay {
-        position: fixed;
-        inset: 0;
-        z-index: 2147483647;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1.5rem;
-        background:
-            radial-gradient(circle at 25% 15%, rgba(0, 216, 255, 0.18), transparent 34%),
-            radial-gradient(circle at 78% 78%, rgba(57, 255, 20, 0.10), transparent 30%),
-            #030812;
-    }
-
-    .rotate-device-card {
-        width: min(88vw, 430px);
-        padding: 2rem 1.35rem;
-        text-align: center;
-        color: #d9f6ff;
-        background: rgba(8, 20, 44, 0.97);
-        border: 1px solid rgba(80, 231, 255, 0.42);
-        border-radius: 24px;
-        box-shadow:
-            0 0 28px rgba(0, 216, 255, 0.16),
-            inset 0 0 24px rgba(0, 216, 255, 0.05);
-    }
-
-    .rotate-device-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 5.6rem;
-        height: 5.6rem;
-        margin-bottom: 1rem;
-        border: 3px solid #50e7ff;
-        border-radius: 18px;
-        color: #39ff14;
-        font-size: 3.2rem;
-        line-height: 1;
-        transform: rotate(90deg);
-        box-shadow: 0 0 22px rgba(80, 231, 255, 0.22);
-    }
-
-    .rotate-device-title {
-        margin-bottom: 0.65rem;
-        color: #50e7ff;
-        font-size: 1.65rem;
-        font-weight: 800;
-    }
-
-    .rotate-device-text {
-        color: #a9cee0;
-        font-size: 1rem;
-        line-height: 1.7;
-    }
-
-    .rotate-device-note {
-        margin-top: 0.85rem;
-        color: #66f29a;
-        font-size: 0.9rem;
-    }
-}
-
-/* 横屏手机：固定从左上角缩放，避免宽容器居中后左右被裁切 */
-@media screen and (orientation: landscape) and (max-height: 700px) and (max-width: 1200px) {
+@media screen and (max-width: 900px) {
     html,
     body,
     [data-testid="stAppViewContainer"],
     [data-testid="stMain"] {
-        width: 100vw !important;
-        max-width: 100vw !important;
+        width: 100% !important;
+        max-width: 100% !important;
         overflow-x: hidden !important;
     }
 
-    /* 隐藏 Streamlit 自己的顶部工具栏，给手机浏览器腾出纵向空间 */
-    [data-testid="stHeader"] {
-        display: none !important;
-        height: 0 !important;
-        min-height: 0 !important;
-    }
-
-    /* 核心修复：
-       1. 容器不再居中；
-       2. 从左上角缩放；
-       3. 0.65 × 153.846% ≈ 100%，正好铺满视口。 */
     .block-container {
-        position: relative !important;
-        left: 0 !important;
-        top: 0 !important;
-        width: 153.846vw !important;
-        max-width: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
         margin: 0 !important;
-        padding: 0.15rem 0.55rem 0.35rem 0.55rem !important;
-        transform: scale(0.65) !important;
-        transform-origin: top left !important;
+        padding: 0.35rem 0.55rem 1rem 0.55rem !important;
+        transform: none !important;
     }
 
-    /* 阻止 Streamlit 把主图和控制面板改成上下堆叠 */
+    /* 手机端让各组列自然纵向排列，所有内容都能通过滚动查看 */
     [data-testid="stHorizontalBlock"] {
-        width: 100% !important;
+        flex-direction: column !important;
         flex-wrap: nowrap !important;
-        align-items: flex-start !important;
-        gap: 0.4rem !important;
+        gap: 0.45rem !important;
     }
 
     [data-testid="column"] {
-        min-width: 0 !important;
-        width: auto !important;
-        flex-shrink: 1 !important;
-    }
-
-    /* 横屏时隐藏 Plotly 浮动工具条，避免遮挡图例和势垒标题 */
-    .modebar {
-        display: none !important;
+        width: 100% !important;
+        min-width: 100% !important;
+        flex: 1 1 100% !important;
     }
 
     .main-top-offset,
@@ -407,113 +317,121 @@ hr {
         height: 0 !important;
     }
 
-    .dashboard-title,
-    .side-title {
-        font-size: 1.68rem !important;
-        line-height: 1.03 !important;
+    .dashboard-title {
+        font-size: clamp(1.9rem, 8vw, 2.65rem) !important;
+        line-height: 1.08 !important;
+        letter-spacing: -0.035em !important;
     }
 
+    .side-title,
     .section-label {
-        font-size: 1.28rem !important;
-        line-height: 1.05 !important;
-        margin-top: 0.38rem !important;
-        margin-bottom: 0.16rem !important;
+        font-size: clamp(1.45rem, 6vw, 2rem) !important;
+        line-height: 1.1 !important;
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.28rem !important;
     }
 
     .dashboard-subtitle {
-        margin: 0.1rem 0 0.2rem 0 !important;
-        font-size: 0.78rem !important;
-        line-height: 1.22 !important;
+        margin: 0.28rem 0 0.5rem 0 !important;
+        font-size: 0.92rem !important;
+        line-height: 1.55 !important;
     }
 
     [data-testid="stMetric"] {
-        min-height: 58px !important;
-        padding: 0.28rem 0.45rem !important;
-        border-radius: 10px !important;
-    }
-
-    [data-testid="stMetricLabel"] {
-        font-size: 0.72rem !important;
+        width: 100% !important;
+        min-height: 72px !important;
+        padding: 0.48rem 0.65rem !important;
     }
 
     [data-testid="stMetricValue"] {
-        font-size: 1.35rem !important;
+        font-size: 1.55rem !important;
     }
 
     .param-grid {
-        gap: 0.2rem !important;
-        margin: 0.16rem 0 0.22rem 0 !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 0.38rem !important;
     }
 
     .param-chip {
-        padding: 0.24rem 0.36rem !important;
-        border-radius: 8px !important;
-        font-size: 0.72rem !important;
+        padding: 0.42rem 0.52rem !important;
     }
 
     .tip-box,
     .compact-card {
-        padding: 0.34rem 0.44rem !important;
-        margin: 0.18rem 0 0.24rem 0 !important;
-        border-radius: 8px !important;
-        font-size: 0.72rem !important;
-        line-height: 1.28 !important;
+        font-size: 0.88rem !important;
+        line-height: 1.5 !important;
     }
 
     .observation-list {
-        margin-left: 0.82rem !important;
-        font-size: 0.72rem !important;
-        line-height: 1.28 !important;
+        font-size: 0.9rem !important;
+        line-height: 1.55 !important;
     }
 
     .chat-title {
-        font-size: 0.96rem !important;
-        margin-top: 0.08rem !important;
+        font-size: 1.2rem !important;
     }
 
     .chat-bubble-ai,
     .chat-bubble-user {
-        padding: 0.28rem 0.4rem !important;
-        font-size: 0.72rem !important;
-        line-height: 1.28 !important;
+        max-width: 96% !important;
+        font-size: 0.9rem !important;
     }
 
-    div.stButton > button,
-    div[data-testid="stFormSubmitButton"] > button {
-        min-height: 1.8rem !important;
-        padding-top: 0.2rem !important;
-        padding-bottom: 0.2rem !important;
+    [data-testid="stPlotlyChart"] {
+        width: 100% !important;
+        overflow: hidden !important;
     }
 
-    div[data-testid="stTextInput"] input {
-        min-height: 1.8rem !important;
-        font-size: 0.72rem !important;
+    .modebar {
+        display: none !important;
+    }
+
+    .mobile-layout-note {
+        display: block;
+        margin: 0.2rem 0 0.55rem 0;
+        padding: 0.52rem 0.65rem;
+        color: #a8dcff;
+        background: rgba(18, 48, 84, 0.72);
+        border-left: 3px solid #50e7ff;
+        border-radius: 8px;
+        font-size: 0.82rem;
+        line-height: 1.45;
+    }
+}
+
+/* 横屏手机仍使用响应式页面；增加可用宽度，但允许正常上下滚动 */
+@media screen and (orientation: landscape) and (max-height: 700px) and (max-width: 1200px) {
+    [data-testid="stHeader"] {
+        height: 2rem !important;
+        min-height: 2rem !important;
+    }
+
+    .block-container {
+        padding-top: 0.15rem !important;
+    }
+
+    .dashboard-title {
+        font-size: 1.75rem !important;
+    }
+
+    .side-title,
+    .section-label {
+        font-size: 1.35rem !important;
+    }
+
+    .dashboard-subtitle {
+        font-size: 0.8rem !important;
+        margin-bottom: 0.3rem !important;
+    }
+
+    [data-testid="stMetric"] {
+        min-height: 62px !important;
     }
 }
 </style>
 """,
     unsafe_allow_html=True,
 )
-
-st.markdown(
-    """
-<div class="rotate-device-overlay">
-    <div class="rotate-device-card">
-        <div class="rotate-device-icon">↻</div>
-        <div class="rotate-device-title">请横屏查看交互平台</div>
-        <div class="rotate-device-text">
-            请开启手机自动旋转，然后将手机旋转 90°。<br>
-            横屏后将自动显示桌面式并排布局。
-        </div>
-        <div class="rotate-device-note">
-            若页面没有自动旋转，请解除系统的“竖屏锁定”。
-        </div>
-    </div>
-</div>
-""",
-    unsafe_allow_html=True,
-)
-
 
 # =========================================================
 # 物理模型
@@ -766,6 +684,88 @@ with st.sidebar:
     show_prob = st.toggle("显示 |ψ|²", value=False)
     use_api = st.toggle("AI 助教使用真实 API（已配置时）", value=False)
 
+    components.html(
+        """
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+.wrap {
+    display: grid;
+    gap: 6px;
+}
+button {
+    width: 100%;
+    min-height: 38px;
+    border: 1px solid rgba(80, 231, 255, 0.42);
+    border-radius: 9px;
+    color: #e9fbff;
+    background: linear-gradient(135deg, #102a58, #0b1733);
+    font-size: 14px;
+    cursor: pointer;
+}
+button:active {
+    transform: scale(0.99);
+}
+#status {
+    min-height: 17px;
+    color: #9fd8ff;
+    font-size: 11px;
+    line-height: 1.35;
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+    <button id="landscapeButton">手机端：尝试全屏横屏</button>
+    <div id="status">部分应用内置浏览器不支持锁定方向，失败时页面仍可竖屏滚动使用。</div>
+</div>
+<script>
+const button = document.getElementById("landscapeButton");
+const status = document.getElementById("status");
+
+button.addEventListener("click", async () => {
+    status.textContent = "正在请求全屏和横屏…";
+
+    try {
+        const parentDocument = window.parent.document;
+        const root = parentDocument.documentElement;
+
+        if (root.requestFullscreen) {
+            await root.requestFullscreen();
+        } else if (root.webkitRequestFullscreen) {
+            root.webkitRequestFullscreen();
+        }
+
+        const orientation =
+            window.parent.screen?.orientation ||
+            window.screen?.orientation;
+
+        if (orientation?.lock) {
+            await orientation.lock("landscape");
+            status.textContent = "已请求横屏。若未旋转，请手动旋转手机。";
+        } else {
+            status.textContent = "当前浏览器不支持自动锁定横屏，请手动旋转手机。";
+        }
+    } catch (error) {
+        status.textContent =
+            "浏览器拒绝自动横屏。请使用系统浏览器打开，或直接竖屏滚动查看。";
+    }
+});
+</script>
+</body>
+</html>
+""",
+        height=72,
+    )
+
     st.markdown("<hr>", unsafe_allow_html=True)
     st.markdown(
         '<div class="section-label" style="font-size:1.05rem;">教学提示</div>',
@@ -807,6 +807,10 @@ with main_col:
         """
 <div class="dashboard-subtitle">
 调节参数，观察波函数与透射率如何随势垒高度、宽度、粒子能量和质量变化。
+</div>
+<div class="mobile-layout-note">
+手机竖屏和横屏均可直接使用。页面内容会按顺序排列，可上下滚动查看；
+需要横屏时可在参数侧栏点击“尝试全屏横屏”。
 </div>
 """,
         unsafe_allow_html=True,
